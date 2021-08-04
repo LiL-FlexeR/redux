@@ -15,7 +15,7 @@ function Alert(props) {
   return <MuiAlert elevation={6} variant="filled" {...props} />;
 }
 
-const SignUpForm = () => {
+const SignUpForm = ({ setModalOpen }) => {
   const initialState = {
     email: "",
     password: "",
@@ -93,6 +93,7 @@ const SignUpForm = () => {
       } catch (error) {
         errorSign();
       }
+      setModalOpen(false);
     }
   };
 

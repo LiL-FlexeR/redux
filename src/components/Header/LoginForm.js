@@ -9,9 +9,8 @@ import {
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchAuth, fetchCurrentUser } from "../../store/authSlice";
-import reset from "../../store/authSlice";
 
-const LoginForm = () => {
+const LoginForm = ({ setModalOpen }) => {
   const initialState = {
     email: "",
     password: "",
@@ -57,6 +56,7 @@ const LoginForm = () => {
       console.log(postData);
       await dispatch(fetchAuth(postData));
       dispatch(fetchCurrentUser());
+      setModalOpen(false);
     }
   };
 

@@ -7,12 +7,14 @@ import Posts from "../components/Posts/Posts";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import { fetchCurrentUser } from "../store/authSlice";
+import Alert from "@material-ui/lab/Alert";
+import Snackbar from "@material-ui/core/Snackbar";
 
 const Main = () => {
-  const [open, setOpen] = React.useState(false);
+  const [openModal, setModalOpen] = React.useState(false);
   const [login, setLogin] = React.useState(true);
   const [signUp, setSignUp] = React.useState(false);
-  const { auth, currentUser } = useSelector((state) => state.auth);
+  const { auth, currentUser, errorAuth } = useSelector((state) => state.auth);
   const posts = useSelector((state) => state.posts);
   const token = localStorage.getItem("token");
   const dispatch = useDispatch();
@@ -20,6 +22,9 @@ const Main = () => {
   const [next, setNext] = React.useState(8);
   const [visiblePosts, setVisiblePosts] = React.useState([]);
   let postsArr = [];
+  const loginError = useSelector((state) => state.auth.error);
+  const postsError = useSelector((state) => state.posts.error);
+  const [open, setOpen] = React.useState(false);
 
   useEffect(() => {
     if (token) {
@@ -33,7 +38,9 @@ const Main = () => {
     setVisiblePosts(postsArr);
   };
 
-  console.log(visiblePosts);
+  useEffect(() => {
+    setOpen(true);
+  }, [loginError, postsError]);
 
   useEffect(() => {
     addPosts(0, next);
@@ -42,14 +49,20 @@ const Main = () => {
   return (
     <CssBaseline>
       <Header
-        open={open}
-        setOpen={setOpen}
+        openModal={openModal}
+        setModalOpen={setModalOpen}
         setLogin={setLogin}
         setSignUp={setSignUp}
-        auth={auth}
         currentUser={currentUser}
+        loginError={loginError}
+        auth={auth}
       />
-      <Modal setOpen={setOpen} open={open} login={login} signUp={signUp} />
+      <Modal
+        openModal={openModal}
+        setModalOpen={setModalOpen}
+        login={login}
+        signUp={signUp}
+      />
       <Posts
         component={Post}
         visiblePosts={visiblePosts}
@@ -57,6 +70,17 @@ const Main = () => {
         next={next}
         setNext={setNext}
       />
+      {errorAuth.isError || postsError.isError ? (
+        <Snackbar open={open} autoHideDuration={5000}>
+          <Alert severity="error">
+            {login.isError
+              ? errorAuth.message
+              : postsError.isError
+              ? postsError.message
+              : null}
+          </Alert>
+        </Snackbar>
+      ) : null}
     </CssBaseline>
   );
 };

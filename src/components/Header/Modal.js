@@ -3,14 +3,18 @@ import React from "react";
 import LoginForm from "./LoginForm";
 import SignUpForm from "./SignUpForm";
 
-const Modal = ({ open, setOpen, login, signUp }) => {
+const Modal = ({ openModal, setModalOpen, login }) => {
   const handleClose = () => {
-    setOpen(false);
+    setModalOpen(false);
   };
 
   return (
-    <Dialog open={open} onClose={handleClose}>
-      {!login ? <LoginForm /> : <SignUpForm />}
+    <Dialog open={openModal} onClose={handleClose}>
+      {!login ? (
+        <LoginForm setModalOpen={setModalOpen} />
+      ) : (
+        <SignUpForm setModalOpen={setModalOpen} />
+      )}
     </Dialog>
   );
 };
